@@ -4,36 +4,37 @@ planes_table_drop = "DROP TABLE IF EXISTS planes;"
 airports_table_drop = "DROP TABLE IF EXISTS airports;"
 
 on_time_table_create = """
-    CREATE TABLE IF NOTE EXISTS on_time (
-        year SMALLINT NOT NULL,
-        month SMALLINT NOT NULL,
-        day_of_month SMALLINT NOT NULL,
-        day_of_week SMALLINT NOT NULL,
-        departure_time NOT NULL,
-        crs_departure_time NOT NULL,
-        arrival_time NOT NULL,
-        crs_arrival_time NOT NULL,
-        unique_carrier TEXT NOT NULL,
-        flight_number SMALLINT NOT NULL,
-        tail_number NOT NULL,
-        elapsed_time NOT NULL,
-        crs_elapsed_time,
-        air_time,
-        arrival_delay,
-        departure_delay,
-        origin,
-        destination,
-        distance,
-        taxi_in,
-        taxi_out,
-        cancelled,
-        cancellation_code,
-        diverted,
-        carrier_delay,
-        wheather_delay,
-        nas_delay,
-        security_delay,
-        late_aircraft_delay
+    CREATE TABLE IF NOT EXISTS on_time (
+        year SMALLINT,
+        month SMALLINT,
+        day SMALLINT,
+        day_of_week SMALLINT,
+        departure_time INT,
+        crs_departure_time INT,
+        arrival_time INT,
+        crs_arrival_time INT,
+        unique_carrier VARCHAR,
+        flight_number SMALLINT,
+        tail_number VARCHAR(6),
+        actual_elapsed_time REAL,
+        crs_elapsed_time REAL,
+        air_time REAL,
+        arrival_delay REAL,
+        departure_delay REAL,
+        origin CHAR(3),
+        destination CHAR(3),
+        distance REAL,
+        taxi_in REAL,
+        taxi_out REAL,
+        cancelled BOOLEAN,
+        cancellation_code CHAR(1),
+        diverted BOOLEAN,
+        carrier_delay REAL,
+        wheather_delay REAL,
+        nas_delay REAL,
+        security_delay REAL,
+        late_aircraft_delay REAL,
+        PRIMARY KEY(year, month, day, departure_time, tail_number)
     );
 """
 
@@ -68,6 +69,58 @@ airports_table_create = """
         lat NUMERIC(8,6),
         lon NUMERIC(9,6)
     );
+"""
+
+on_time_table_insert = """
+    INSERT INTO on_time (
+        year,
+        month,
+        day,
+        day_of_week,
+        departure_time,
+        crs_departure_time,
+        arrival_time,
+        crs_arrival_time,
+        unique_carrier,
+        flight_number,
+        tail_number,
+        actual_elapsed_time,
+        crs_elapsed_time,
+        air_time,
+        arrival_delay,
+        departure_delay,
+        origin,
+        destination,
+        distance,
+        taxi_in,
+        taxi_out,
+        cancelled,
+        cancellation_code,
+        diverted,
+        carrier_delay,
+        wheather_delay,
+        nas_delay,
+        security_delay,
+        late_aircraft_delay
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT (year, month, day, departure_time, tail_number)
+    DO UPDATE
+    SET
+        departure_time = EXCLUDED.departure_time,
+        arrival_time = EXCLUDED.arrival_time,
+        actual_elapsed_time = EXCLUDED.actual_elapsed_time,
+        air_time = EXCLUDED.air_time,
+        arrival_delay = EXCLUDED.arrival_delay,
+        departure_delay = EXCLUDED.departure_delay,
+        cancelled = EXCLUDED.cancelled,
+        cancellation_code = EXCLUDED.cancellation_code,
+        diverted = EXCLUDED.diverted,
+        carrier_delay = EXCLUDED.carrier_delay,
+        wheather_delay = EXCLUDED.wheather_delay,
+        nas_delay = EXCLUDED.nas_delay,
+        security_delay = EXCLUDED.security_delay,
+        late_aircraft_delay = EXCLUDED.late_aircraft_delay;
+    
 """
 
 planes_table_insert = """
@@ -127,5 +180,5 @@ airports_table_insert = """
         lon = EXCLUDED.lon;
 """
 
-drop_table_queries = [planes_table_drop, carriers_table_drop, airports_table_drop]
-create_table_queries = [planes_table_create, carriers_table_create, airports_table_create]
+drop_table_queries = [planes_table_drop, carriers_table_drop, airports_table_drop, on_time_table_drop]
+create_table_queries = [planes_table_create, carriers_table_create, airports_table_create, on_time_table_create]

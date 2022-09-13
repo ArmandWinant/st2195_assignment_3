@@ -54,7 +54,7 @@ def aws_connect():
     return client, resource
 
 
-def upload_dbfile(filename):
+def upload_dbfile():
     """
     Description: This function is responsible for uploading a given database file to the designated AWS S3 bucket.
     Once succesfully uploaded, the local file is deleted.
@@ -65,12 +65,13 @@ def upload_dbfile(filename):
     Returns:
         None
     """
+    os.chdir('..')
     # generate AWS interface objects
     client, resource = aws_connect()
     
     try:   
         # open the file and upload to S3 bucket
-        with open(filename, 'rb') as data:
+        with open('airline2.db', 'rb') as data:
             client.upload_fileobj(data, 'flights-db', 'db-file')
 
         # delete the local file

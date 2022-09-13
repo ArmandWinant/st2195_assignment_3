@@ -4,6 +4,9 @@ from sql_queries import create_table_queries, drop_table_queries
 
 
 def initialise_db():
+    working_directory = os.getcwd()
+    os.chdir('..')
+
     db_filename = "airline2.db"
         
     # remove the db file if it exists
@@ -15,6 +18,9 @@ def initialise_db():
     # create database and open connection
     conn = sqlite3.connect(db_filename)
     cur = conn.cursor()
+       
+    # restore the initial working directory
+    os.chdir(working_directory)
     
     return cur, conn
 

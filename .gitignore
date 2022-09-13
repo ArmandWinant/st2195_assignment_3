@@ -40,3 +40,6 @@ vignettes/*.pdf
 
 # AWS Access Key File
 rootkey.csv
+
+# Database file
+airline2.db

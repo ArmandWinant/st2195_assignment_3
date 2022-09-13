@@ -3,6 +3,7 @@ carriers_table_drop = "DROP TABLE IF EXISTS carriers;"
 planes_table_drop = "DROP TABLE IF EXISTS planes;"
 airports_table_drop = "DROP TABLE IF EXISTS airports;"
 
+# TABLE CREATE QUERIES
 on_time_table_create = """
     CREATE TABLE IF NOT EXISTS on_time (
         year SMALLINT,
@@ -71,6 +72,7 @@ airports_table_create = """
     );
 """
 
+# TABLE INSERT QUERIES
 on_time_table_insert = """
     INSERT INTO on_time (
         year,
@@ -119,8 +121,7 @@ on_time_table_insert = """
         wheather_delay = EXCLUDED.wheather_delay,
         nas_delay = EXCLUDED.nas_delay,
         security_delay = EXCLUDED.security_delay,
-        late_aircraft_delay = EXCLUDED.late_aircraft_delay;
-    
+        late_aircraft_delay = EXCLUDED.late_aircraft_delay; 
 """
 
 planes_table_insert = """

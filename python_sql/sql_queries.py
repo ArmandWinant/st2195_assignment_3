@@ -35,7 +35,11 @@ on_time_table_create = """
         nas_delay REAL,
         security_delay REAL,
         late_aircraft_delay REAL,
-        PRIMARY KEY(year, month, day, departure_time, tail_number)
+        PRIMARY KEY(year, month, day, departure_time, tail_number),
+        FOREIGN KEY(unique_carrier) REFERENCES carriers (code),
+        FOREIGN KEY(tail_number) REFERENCES planes (tail_number),
+        FOREIGN KEY(origin) REFERENCES airports (iata),
+        FOREIGN KEY(destination) REFERENCES airports (iata)
     );
 """
 

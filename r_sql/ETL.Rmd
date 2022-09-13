@@ -1,23 +1,47 @@
 ---
-title: "R Notebook"
+title: "Practice assignment 3 - ETL"
 output: html_notebook
 ---
-
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
-
-```{r}
-```
 
 ```{r}
 source("create_tables.R")
 ```
 
+Load the given file's data into a table.
 ```{r}
-conn <- initialise_db()
-create_tables(conn)
-dbReadTable(conn, "planes")
+process_data_file <- function(file, conn, table_name) {
+  df <- read.csv(file, header = TRUE)
+  dbWriteTable(conn, table_name, df, append = TRUE)
+}
+```
+
+This function loops through all the files in the data directory, and selectively applies the upload functions to create and fill tables.
+```{r}
+process_data <- function(conn) {
+  working_directory = getwd()
+  setwd('../../dataverse_files')
+  
+  for (file in list.files()) {
+    if (endsWith(file, 'bz2') && (grepl('^200(6|7|8){1}', file, ignore.case=FALSE))) {
+      process_data_file(file, conn, "on_time")
+    } else if (startsWith(file, 'plane-data')) {
+      process_data_file(file, conn, "planes")
+    } else if (startsWith(file, "carriers")) {
+      process_data_file(file, conn, "carriers")
+    } else if (startsWith(file, "airports")) {
+      process_data_file(file, conn, "airports")
+    }
+  }
+  
+  # restore the initial working directory
+  setwd(working_directory)
+}
+```
+
+Run the database initialisation and uploading functions, then close connection.
+```{r}
+conn = initialise_db()
+process_data(conn)
 dbDisconnect(conn)
 ```
 

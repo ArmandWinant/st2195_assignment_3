@@ -11,7 +11,7 @@
 
 
 
-<title>Practice assignment 3 - ETL</title>
+<title>Practice assignment 3 - Questions</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1762,71 +1762,179 @@ pre code {
 
 
 
-<h1 class="title toc-ignore">Practice assignment 3 - ETL</h1>
+<h1 class="title toc-ignore">Practice assignment 3 - Questions</h1>
 
 </div>
 
 
 <!-- rnb-text-begin -->
+<div id="import-libraries" class="section level4">
+<h4>Import libraries</h4>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc291cmNlKFwiY3JlYXRlX3RhYmxlcy5SXCIpXG5gYGAifQ== -->
-<pre class="r"><code>source(&quot;create_tables.R&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShEQkkpXG5saWJyYXJ5KGRicGx5cilcbmBgYCJ9 -->
+<pre class="r"><code>library(DBI)
+library(dbplyr)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Load the given file’s data into a table.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJvY2Vzc19kYXRhX2ZpbGUgPC0gZnVuY3Rpb24oZmlsZSwgY29ubiwgdGFibGVfbmFtZSkge1xuICBkZiA8LSByZWFkLmNzdihmaWxlLCBoZWFkZXIgPSBUUlVFKVxuICBkYldyaXRlVGFibGUoY29ubiwgdGFibGVfbmFtZSwgZGYsIGFwcGVuZCA9IFRSVUUpXG59XG5gYGAifQ== -->
-<pre class="r"><code>process_data_file &lt;- function(file, conn, table_name) {
-  df &lt;- read.csv(file, header = TRUE)
-  dbWriteTable(conn, table_name, df, append = TRUE)
-}</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiUmVnaXN0ZXJlZCBTMyBtZXRob2RzIG92ZXJ3cml0dGVuIGJ5ICdkYnBseXInOlxuICBtZXRob2QgICAgICAgICBmcm9tXG4gIHByaW50LnRibF9sYXp5ICAgICBcbiAgcHJpbnQudGJsX3NxbCAgICAgIFxuIn0= -->
+<pre><code>Registered S3 methods overwritten by &#39;dbplyr&#39;:
+  method         from
+  print.tbl_lazy     
+  print.tbl_sql      </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShkcGx5cilcbmBgYCJ9 -->
+<pre class="r"><code>library(dplyr)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>This function loops through all the files in the data directory, and
-selectively applies the upload functions to create and fill tables.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucHJvY2Vzc19kYXRhIDwtIGZ1bmN0aW9uKGNvbm4pIHtcbiAgd29ya2luZ19kaXJlY3RvcnkgPSBnZXR3ZCgpXG4gIHNldHdkKCcuLi8uLi9kYXRhdmVyc2VfZmlsZXMnKVxuICBcbiAgZm9yIChmaWxlIGluIGxpc3QuZmlsZXMoKSkge1xuICAgIGlmIChlbmRzV2l0aChmaWxlLCAnYnoyJykgJiYgKGdyZXBsKCdeMjAwKDZ8N3w4KXsxfScsIGZpbGUsIGlnbm9yZS5jYXNlPUZBTFNFKSkpIHtcbiAgICAgIHByb2Nlc3NfZGF0YV9maWxlKGZpbGUsIGNvbm4sIFwib25fdGltZVwiKVxuICAgIH0gZWxzZSBpZiAoc3RhcnRzV2l0aChmaWxlLCAncGxhbmUtZGF0YScpKSB7XG4gICAgICBwcm9jZXNzX2RhdGFfZmlsZShmaWxlLCBjb25uLCBcInBsYW5lc1wiKVxuICAgIH0gZWxzZSBpZiAoc3RhcnRzV2l0aChmaWxlLCBcImNhcnJpZXJzXCIpKSB7XG4gICAgICBwcm9jZXNzX2RhdGFfZmlsZShmaWxlLCBjb25uLCBcImNhcnJpZXJzXCIpXG4gICAgfSBlbHNlIGlmIChzdGFydHNXaXRoKGZpbGUsIFwiYWlycG9ydHNcIikpIHtcbiAgICAgIHByb2Nlc3NfZGF0YV9maWxlKGZpbGUsIGNvbm4sIFwiYWlycG9ydHNcIilcbiAgICB9XG4gIH1cbiAgXG4gICMgcmVzdG9yZSB0aGUgaW5pdGlhbCB3b3JraW5nIGRpcmVjdG9yeVxuICBzZXR3ZCh3b3JraW5nX2RpcmVjdG9yeSlcbn1cbmBgYCJ9 -->
-<pre class="r"><code>process_data &lt;- function(conn) {
-  working_directory = getwd()
-  setwd(&#39;../../dataverse_files&#39;)
-  
-  for (file in list.files()) {
-    if (endsWith(file, &#39;bz2&#39;) &amp;&amp; (grepl(&#39;^200(6|7|8){1}&#39;, file, ignore.case=FALSE))) {
-      process_data_file(file, conn, &quot;on_time&quot;)
-    } else if (startsWith(file, &#39;plane-data&#39;)) {
-      process_data_file(file, conn, &quot;planes&quot;)
-    } else if (startsWith(file, &quot;carriers&quot;)) {
-      process_data_file(file, conn, &quot;carriers&quot;)
-    } else if (startsWith(file, &quot;airports&quot;)) {
-      process_data_file(file, conn, &quot;airports&quot;)
-    }
-  }
-  
-  # restore the initial working directory
-  setwd(working_directory)
-}</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Run the database initialisation and uploading functions, then close
-connection.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29ubiA9IGluaXRpYWxpc2VfZGIoKVxucHJvY2Vzc19kYXRhKGNvbm4pXG5kYkRpc2Nvbm5lY3QoY29ubilcbmBgYCJ9 -->
-<pre class="r"><code>conn = initialise_db()
-process_data(conn)
-dbDisconnect(conn)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5BdHRhY2hpbmcgcGFja2FnZTog4oCYZHBseXLigJlcblxuVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSDigJhwYWNrYWdlOmRicGx5cuKAmTpcblxuICAgIGlkZW50LCBzcWxcblxuVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSDigJhwYWNrYWdlOnN0YXRz4oCZOlxuXG4gICAgZmlsdGVyLCBsYWdcblxuVGhlIGZvbGxvd2luZyBvYmplY3RzIGFyZSBtYXNrZWQgZnJvbSDigJhwYWNrYWdlOmJhc2XigJk6XG5cbiAgICBpbnRlcnNlY3QsIHNldGRpZmYsIHNldGVxdWFsLCB1bmlvblxuIn0= -->
+<pre><code>
+Attaching package: ‘dplyr’
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUHJhY3RpY2UgYXNzaWdubWVudCAzIC0gRVRMIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgpgYGB7cn0Kc291cmNlKCJjcmVhdGVfdGFibGVzLlIiKQpgYGAKCkxvYWQgdGhlIGdpdmVuIGZpbGUncyBkYXRhIGludG8gYSB0YWJsZS4KYGBge3J9CnByb2Nlc3NfZGF0YV9maWxlIDwtIGZ1bmN0aW9uKGZpbGUsIGNvbm4sIHRhYmxlX25hbWUpIHsKICBkZiA8LSByZWFkLmNzdihmaWxlLCBoZWFkZXIgPSBUUlVFKQogIGRiV3JpdGVUYWJsZShjb25uLCB0YWJsZV9uYW1lLCBkZiwgYXBwZW5kID0gVFJVRSkKfQpgYGAKClRoaXMgZnVuY3Rpb24gbG9vcHMgdGhyb3VnaCBhbGwgdGhlIGZpbGVzIGluIHRoZSBkYXRhIGRpcmVjdG9yeSwgYW5kIHNlbGVjdGl2ZWx5IGFwcGxpZXMgdGhlIHVwbG9hZCBmdW5jdGlvbnMgdG8gY3JlYXRlIGFuZCBmaWxsIHRhYmxlcy4KYGBge3J9CnByb2Nlc3NfZGF0YSA8LSBmdW5jdGlvbihjb25uKSB7CiAgd29ya2luZ19kaXJlY3RvcnkgPSBnZXR3ZCgpCiAgc2V0d2QoJy4uLy4uL2RhdGF2ZXJzZV9maWxlcycpCiAgCiAgZm9yIChmaWxlIGluIGxpc3QuZmlsZXMoKSkgewogICAgaWYgKGVuZHNXaXRoKGZpbGUsICdiejInKSAmJiAoZ3JlcGwoJ14yMDAoNnw3fDgpezF9JywgZmlsZSwgaWdub3JlLmNhc2U9RkFMU0UpKSkgewogICAgICBwcm9jZXNzX2RhdGFfZmlsZShmaWxlLCBjb25uLCAib25fdGltZSIpCiAgICB9IGVsc2UgaWYgKHN0YXJ0c1dpdGgoZmlsZSwgJ3BsYW5lLWRhdGEnKSkgewogICAgICBwcm9jZXNzX2RhdGFfZmlsZShmaWxlLCBjb25uLCAicGxhbmVzIikKICAgIH0gZWxzZSBpZiAoc3RhcnRzV2l0aChmaWxlLCAiY2FycmllcnMiKSkgewogICAgICBwcm9jZXNzX2RhdGFfZmlsZShmaWxlLCBjb25uLCAiY2FycmllcnMiKQogICAgfSBlbHNlIGlmIChzdGFydHNXaXRoKGZpbGUsICJhaXJwb3J0cyIpKSB7CiAgICAgIHByb2Nlc3NfZGF0YV9maWxlKGZpbGUsIGNvbm4sICJhaXJwb3J0cyIpCiAgICB9CiAgfQogIAogICMgcmVzdG9yZSB0aGUgaW5pdGlhbCB3b3JraW5nIGRpcmVjdG9yeQogIHNldHdkKHdvcmtpbmdfZGlyZWN0b3J5KQp9CmBgYAoKUnVuIHRoZSBkYXRhYmFzZSBpbml0aWFsaXNhdGlvbiBhbmQgdXBsb2FkaW5nIGZ1bmN0aW9ucywgdGhlbiBjbG9zZSBjb25uZWN0aW9uLgpgYGB7cn0KY29ubiA9IGluaXRpYWxpc2VfZGIoKQpwcm9jZXNzX2RhdGEoY29ubikKZGJEaXNjb25uZWN0KGNvbm4pCmBgYAoK</div>
+The following objects are masked from ‘package:dbplyr’:
+
+    ident, sql
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="connect-to-database-and-list-tables" class="section level4">
+<h4>Connect to database and list tables</h4>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29ubiA8LSBkYkNvbm5lY3QoUlNRTGl0ZTo6U1FMaXRlKCksIFwiLi4vYWlybGluZTIuZGJcIilcbmRiTGlzdFRhYmxlcyhjb25uKVxuYGBgIn0= -->
+<pre class="r"><code>conn &lt;- dbConnect(RSQLite::SQLite(), &quot;../airline2.db&quot;)
+dbListTables(conn)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiYWlycG9ydHNcIiBcImNhcnJpZXJzXCIgXCJvbl90aW1lXCIgIFwicGxhbmVzXCIgIFxuIn0= -->
+<pre><code>[1] &quot;airports&quot; &quot;carriers&quot; &quot;on_time&quot;  &quot;planes&quot;  </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="create-references-ro-each-table-in-the-database" class="section level4">
+<h4>Create references ro each table in the database</h4>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZmxpZ2h0cyA8LSB0YmwoY29ubiwgXCJvbl90aW1lXCIpXG5wbGFuZXMgPC0gdGJsKGNvbm4sIFwicGxhbmVzXCIpXG5jYXJyaWVycyA8LSB0YmwoY29ubiwgXCJjYXJyaWVyc1wiKVxuYWlycG9ydHMgPC0gdGJsKGNvbm4sIFwiYWlycG9ydHNcIilcbmBgYCJ9 -->
+<pre class="r"><code>flights &lt;- tbl(conn, &quot;on_time&quot;)
+planes &lt;- tbl(conn, &quot;planes&quot;)
+carriers &lt;- tbl(conn, &quot;carriers&quot;)
+airports &lt;- tbl(conn, &quot;airports&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="which-of-the-following-airplanes-has-the-lowest-associated-average-departure-delay-excluding-cancelled-and-diverted-flights" class="section level3">
+<h3>Which of the following airplanes has the lowest associated average
+departure delay (excluding Cancelled and Diverted flights)?</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucTEgPC0gaW5uZXJfam9pbihmbGlnaHRzLCBwbGFuZXMsIGJ5PWMoXCJUYWlsTnVtXCI9XCJ0YWlsbnVtXCIpKSAlPiVcbiAgZmlsdGVyKENhbmNlbGxlZCA9PSAwICYgRGl2ZXJ0ZWQgPT0gMCAmIERlcERlbGF5ID4gMCkgJT4lXG4gIGdyb3VwX2J5KG1vZGVsKSAlPiVcbiAgc3VtbWFyaXplKGF2Z19kZWxheSA9IG1lYW4oRGVwRGVsYXksIG5hLnJtID0gVFJVRSkpICU+JVxuICBhcnJhbmdlKGF2Z19kZWxheSlcbnExXG5gYGAifQ== -->
+<pre class="r"><code>q1 &lt;- inner_join(flights, planes, by=c(&quot;TailNum&quot;=&quot;tailnum&quot;)) %&gt;%
+  filter(Cancelled == 0 &amp; Diverted == 0 &amp; DepDelay &gt; 0) %&gt;%
+  group_by(model) %&gt;%
+  summarize(avg_delay = mean(DepDelay, na.rm = TRUE)) %&gt;%
+  arrange(avg_delay)
+q1</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9TUUxpdGVDb25uZWN0aW9uIiwidGJsX2RiaSIsInRibF9zcWwiLCJ0YmxfbGF6eSIsInRibCJdLCJucm93IjpbXSwibmNvbCI6Miwic3VtbWFyeSI6eyJTb3VyY2UiOlsiU1FMIFs/PyB4IDJdIl0sIkRhdGFiYXNlIjpbInNxbGl0ZSAzLjM5LjMgWy9Vc2Vycy9iYXN0aWVud2luYW50L0Rlc2t0b3AvVW5pdmVyc2l0eS9kYXRhLXNjaWVuY2UtYW5kLWJ1c2luZXNzLWFuYWx5dGljcy9wcm9ncmFtbWluZy1mb3ItZGF0YS1zY2llbmNlL3N0MjE5NV9hc3NpZ25tZW50XzMvYWlybGluZTIuZGJdIl0sIk9yZGVyZWQgYnkiOlsiYXZnX2RlbGF5Il19fSwicmRmIjoiSDRzSUFBQUFBQUFBQTJWWENWZ1RkeFlQa2lBQjhhaTYzbTA4V2xFTVptWXlSd2lFTnpNNVFLNllSRURGS3NqbHdWRkFLMm9SYTZ2d2RiOTJWNm5zV2p5b3ErS0IyZysxcmhZQmoxMlBGZy9BRTIxZGxWcjJ3K0tCYnJzcjdpUTRRLzV4dmh6ei91LzR2OS83dlhuL3hHWk1KUHdTL1dReW1iZE0zc2RMNXEwUWJtV0tHUTZ6bXBFSks0TGdKWlBMbE03dlpZTFJZT0hHdVRoUWVPOThyZWhMRTdRYUp6U0l5T0NvbGtKRXF5ajZ1c1JFaWtmVU0wbEV6ZUNpV21sS05QRXFqTUxOb2dGTFlJd2F3ekIzZjVxYTdxYld2YUhXa0lqSUdsK0xDZ2RCMEJaRUY2R1ZNdEVLbVhDazJWMU5SUFdpcEFRMXJrVzBEbVFmTXFKWFN3ckdtT2lyZEdwMXVOWmtRN3d0TkNMMlpzSVNPQ2E0WXloR0FpazRQWjFCdkdjaTdCQWVXb3gyaDBGNHdHQlIwVTVJZVF2R1dnS1g4blptcGhFeVEzRlNSa1JFOHlRSUZoR2pkUjdNSVFVbTNKeWRzVkFZREJwYXEwRllKOXhFMnAwck9jYmdZaEsrUmxZbFFHQVJUeTFIUzRocEY0Sm9sQ2xKTHlhdFJRdENZRWpXS0xHTVRxVEdoeUxWckNTSnhVUXc2WEMwdGdTU3FFNm5RU0dpTGRHck5jVndhZ3dYUmVWclVlS3hoMWkzaGhSelFYWmp6QkZvTHJIdUlrRmlDSE04aCtUaVJydlRsNk1SRVNlUlVHNlJYVTgzSWpKU1NYeGpqR3FkUnUwMmlKeXg3R0pvaGFCbWtJYlJ1dlVQOVVZdjBoemF1RzZseHdSUmd6eFJORW9NNGNFVGlUYVVCMDlTMy9xeWRoVkJrbWJKMnNpcmRXckpXVzVTdTNrNk03YVFpS1VXclRtT1BpMlNxR0F4amM2RXNFK1FVZEhvN0lwREp4dUJSSmJtdDlMTVJ2TnhzZXBFYTIrVlZRd2g0ZW5wZjNGanVVVWRHZi82ZmxBOEcydFhzWkUyM3NhYUhTcGJQSVZBa1RyYmo0K21ORUlRWTI5SmV3eWtvSGFTRklucjcxSXhSS0NUYTJJU0FsRkxKb3I5N0dObVNLdGEzRUZwWjFsT1JXZzFZb3ZLM0NhREZZMk11eUxqa3hBNnBZa294eldVR01UZnlnbzUyaHhDUDRxY2VmTWVqNkJXcE04L3p1RXcyVlRHQ0Y0dEZUckM3bENUcE9qUWh4THZGQTRjMDhTaXpCSWVTS1VCNVNmWXFzbEFYRU5Pa2tEUmVJeG9IaFhwTU1jbHFpUlNuRXF4TWJ4N041ZHJjVXc4Z2hWMk5ha1I2KzNYQTlJTm85aE9iaVBTMVlwU2hqME5vNUlheGh1VHR2SG5vOVV1cm5uc2pTVU9FMDhHT2F2R3hDSXJuZnRqd3JCeG01cXV3eEI1M2tpcDg4WDZtS3p1MmZXT0h4K0JaWm96OTBLbEtSR3FuTkpwMExNS0hhK2sxSi9PcEhEaFJ3a2oxY1RKS3lPTURQVFhnblFneVlWanJqZGg0WGVHbGtSRmFhY0JKdHMwRlNZTU9VeWpVVVZhRWtRYVdJZE5SZU51cDRWelJZMnNpTVQwVHZtZXJEQk43L1FoQ0kwYlZUMnlzN21FOWhmZU8ySFNMOVVIbDU4K0RFSHpLbTRWV2lvaHFPM244R0xmSnBnYTFMUThKNllkcHM1NFF1bnJxa0NUOXJDeDgrb1F3RExUblJjUXJvZEtCa1RHc3hYaDIyOENrVmt3WG5nQmthVlpPTGRzSGhEUHNuWGJmVWFDTnFaeFMybWREMmcvMmtmZlBGVUUyclZsK1ZodUdXalgxUkp2Sjg0SDdSZUhmL25ZZWdqSWxyRUxGNSs2Qk9Rait2c2lxeDBvSmIyd2Ywb3NVTUhSM3dhZHVnNFVrZHY0d3Z3TlVCOFVUV2VzWjRENkpDQ3RUL29Pb1A1bzZzWnNyVUN0SC9uVTl6d0ZWTm1HUXo5ekNxQzIvc1djc2pZU3FEM0ZVZnBqYTRINnFmMWova0FzMENQK0tseWJnRmFsemFXRGFLREQ2czdXRFcwQk9tbGZ5YldqSjRGZXQvVzlYeXQzQTcyMW9YUGxPNzVBMTh3OC8vU2NHdWk3bTJURjI4NEIvYi9WaVVYVHVvQisrU1FyT3pBSW1FRnJLZzljN2dCbS9PYUMraCtxZ0VuSlBPS3p3d3pNWngrRk43U21BN012WVUzSDNidkFIQy9DbDVmbkF2UGQwY1NMekUxZ0dtMEdjMHNCTUUyejMrMzNlVE13YlQxMTFmbGZhRTJyeGtGbk9yK2ljVGtGdWdPaGZjMDFZYUM3WTc2OC82MThDSmxhNGJQcXhtZ0lpUi9Wa1h6aUtvUzhuQkI4cTRvQXZZeFdibmxVQW5xNTBYbUIzckpuWHR3SGswRWZKMWNjQ3dnQi9RcmIyZk9CUDRHKy9IRHQwZjJwb0c4L01uNmpNaDFDR2ErNDIvYytoTkRwanZMQjlsZ0lqYi8yenBMWlNSQTZNeWFOTExzS29SdXJPanBPQW9SZUxIblNVUk1Nb1RjYXF5TkhsME9ZNzZVaDhXMHpJR3pvT0UxRjhpY1FOa0wvS0w3ZkhBaDdMK3RpeElNQkVEYjllZVFjNVhFSXk5elY5dmZoUGhEV21YRnRjd2VBNGUyM3BsWFZYZ2REOU1QQWtoV2RZSWhWQk14NmR3UVk0bjY5MTdoN054anlPcXYzM05nRWhvMUJmeGhRUHdZTTI1dFkzeElLRFB1K0hMMTMrREF3TkkvcExzb0xBY1A5WnhVbkZHbGc2S28vT3poL0w0Um5kUWRzKytvRWhCL2FraFQ0alJuQXV6RGdQdjFuZ0Ftcm1qdGI5d05RSFdkcUY4d0ZTQ29ScmxLQWl2cWdBdXRNZ1BxRFUvejdOQUNjczdTdjFJd0FhR2xseDVlK0wzeS92UE9ZcndUb0NMdmcyM1FiNE5HZHpDei9jSUJ1Ym1SOHl5WmdGVXNTRHRlRUF6dHc3ZVJGNjNZQU8zblRuSkJyeGNDbVRuU1VHd1g5SXYvNHJJcGdZSGZXMzYwc25BL3NyaGQvNjFmYUFleUp2ZU82UG5vTTdKbXV4enUzUGdYMlNvRHFTc0JZWUp1MjJYOWMrZ0RZMXFMMmRud1ZzUDg2V0gyUjdnTDIyZWtoYXg2R0Fmc2YvTldlVVd1RWI1Y0RzTDhmLy9TQ1BRVFlsOG1CMzE0ZERGei82cGlBNWxMZ2hxYk91em5SQnpoMVExNTFRejV3SWJPTzdWbzJDcmlvTTdtbjRUNXcxcVJDdmlvTHVKVDdmZXU5ZzRITCsveDZkVUloY0FWUGxIR3FMNEZiaW8zZms2RUVib1Z0MVlaeFB3SzMvak9WK1UrMXdOVjBUZm4zYjZ1Qk8zSnM4OFBCRTREN0IzdTc3bDRiY0MyUGRvMHJ2UTdjZzRSVncydjNBdS8xdVBiK1B6Y0RQekJyK0pUS3ljQVBlbjlpZ3ZrRThJR3p1N2RidHdMUDFJeU02SHNPK0ZqRGhiMWY3UVorOWFFcmVkNzF3Qi81bXIrVmV3UDQ3NWo5SGZybndEZWt3OVRUVWNBM2h6b3ZNUG8xaFg3eHVBdU0vTUp5UGIwQmpLYUxSMzZiM1FER2MyT1MvR3YxWUh6MncvY254NVdCc2V1L0VjUFM4c0EwY0pTS2dpd3daZFRaUzdOWGd1bnJwUk5UbGs0RWM3bnBjc0djWVdESmZURnlTTlZ6c0d3Ynl5NXJVNENsdWNPc04vOE9sZ2V6THczdkhnYlRYR1ptaUpxd1BsSjR3YXdGcnN2akQ3UXlMK2ZENE96a3JMUjhRUWh3bnVuRndzZXJWNjltZVJncVJLT0JUaU54TVNzbk5XMnhHQ3A1YWNaY1FVd3U5SFNkdnpnNVgzUVZGLzFTa3d1U2c5UHpoS2lDMU8zaDBqY250MkJCVHJiZzFNZjU3MTdoNGV5VjU3RXdZRW0yTTc5VTlmek1KZG1MMUZybkJpNTF6K1VFNWxYc2R1L0M0TnJTKzlYclVBcnh1RTNMemxpUW5TYm12amc1UlVMWVh5aVdxd3pCdVhrTHNndEVKTUpxZm5CQlRrR3lhT2MzUDJleHVPTENKdXYrUDdoZHBidlVFQUFBIn0= -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["model"],"name":[1],"type":["chr"],"align":["left"]},{"label":["avg_delay"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"737-230","2":"12.95640"},{"1":"737-282","2":"13.68870"},{"1":"737-236","2":"13.95098"},{"1":"737-2P6","2":"15.58560"},{"1":"737-2X6C","2":"15.66786"},{"1":"737-2Y5","2":"16.39808"},{"1":"737-282C","2":"17.40781"},{"1":"EXEC 162F","2":"19.00000"},{"1":"A318-111","2":"19.40607"},{"1":"737-76Q","2":"19.40802"},{"1":"A319-111","2":"19.42652"},{"1":"737-705","2":"19.95481"},{"1":"737-7AD","2":"20.30393"},{"1":"T337G","2":"20.49091"},{"1":"737-7H4","2":"20.52570"},{"1":"747-2B5F","2":"20.53023"},{"1":"737-3K2","2":"20.56137"},{"1":"767-224","2":"21.83254"},{"1":"737-3T5","2":"21.93054"},{"1":"737-5H4","2":"22.03600"},{"1":"757-212","2":"22.18086"},{"1":"737-924ER","2":"22.20094"},{"1":"737-3G7","2":"22.44333"},{"1":"737-3H4","2":"22.51583"},{"1":"A321-211","2":"22.54794"},{"1":"A319-132","2":"22.57072"},{"1":"737-7Q8","2":"22.58038"},{"1":"737-3Y0","2":"22.62342"},{"1":"737-3Q8","2":"22.66602"},{"1":"737-317","2":"22.87858"},{"1":"767-324","2":"23.10000"},{"1":"737-3A4","2":"23.12655"},{"1":"737-3S3","2":"23.24121"},{"1":"767-432ER","2":"23.36201"},{"1":"A320-214","2":"23.52977"},{"1":"757-26D","2":"23.62405"},{"1":"757-232","2":"23.70059"},{"1":"737-33A","2":"23.88126"},{"1":"737-3L9","2":"23.98635"},{"1":"A319-112","2":"23.99198"},{"1":"767-332","2":"24.06841"},{"1":"757-2Q8","2":"24.13912"},{"1":"737-832","2":"24.38441"},{"1":"737-401","2":"24.54488"},{"1":"737-301","2":"24.67321"},{"1":"777-224","2":"24.73239"},{"1":"182A","2":"24.73719"},{"1":"DA 20-A1","2":"24.80594"},{"1":"737-4B7","2":"24.82561"},{"1":"777-232LR","2":"24.90000"},{"1":"737-3B7","2":"25.04608"},{"1":"A319-114","2":"25.27262"},{"1":"A320-231","2":"25.68451"},{"1":"757-2G7","2":"25.86827"},{"1":"737-890","2":"26.18597"},{"1":"65-A90","2":"26.33636"},{"1":"A320-212","2":"26.98883"},{"1":"737-924","2":"27.00084"},{"1":"757-231","2":"27.01667"},{"1":"737-990","2":"27.27994"},{"1":"777-222","2":"27.30866"},{"1":"737-790","2":"27.48173"},{"1":"EMB-120","2":"27.59262"},{"1":"EMB-120ER","2":"27.91684"},{"1":"767-424ER","2":"28.21877"},{"1":"A320-211","2":"28.31770"},{"1":"737-8FH","2":"28.33922"},{"1":"757-23N","2":"28.34884"},{"1":"757-351","2":"28.58852"},{"1":"767-3CB","2":"28.81068"},{"1":"737-73A","2":"28.85081"},{"1":"757-2B7","2":"29.03443"},{"1":"757-225","2":"29.08255"},{"1":"757-33N","2":"29.09857"},{"1":"737-76N","2":"29.15011"},{"1":"737-824","2":"29.32016"},{"1":"MD-90-30","2":"29.40881"},{"1":"757-2S7","2":"29.93908"},{"1":"MD-88","2":"30.11747"},{"1":"737-4Q8","2":"30.30042"},{"1":"767-33A","2":"30.30476"},{"1":"737-7BD","2":"30.31225"},{"1":"757-224","2":"30.44898"},{"1":"717-200","2":"30.58659"},{"1":"737-724","2":"30.63994"},{"1":"757-324","2":"30.67415"},{"1":"757-251","2":"30.82858"},{"1":"737-490","2":"30.89436"},{"1":"777-232","2":"30.95997"},{"1":"AS 355F1","2":"31.42966"},{"1":"DC-9-51","2":"31.70554"},{"1":"E-90","2":"32.02713"},{"1":"767-3G5","2":"32.28515"},{"1":"DC-9-41","2":"32.42913"},{"1":"767-322","2":"32.72292"},{"1":"757-222","2":"33.22461"},{"1":"A109E","2":"33.50538"},{"1":"EMB-135KL","2":"33.57251"},{"1":"737-3TO","2":"33.67078"},{"1":"767-223","2":"33.67181"},{"1":"767-3P6","2":"33.85345"},{"1":"FALCON-XP","2":"33.86616"},{"1":"MD 83","2":"33.98639"},{"1":"A320-232","2":"34.04264"},{"1":"G-IV","2":"34.12909"},{"1":"VANS AIRCRAFT RV6","2":"34.33284"},{"1":"DC-9-31","2":"34.78245"},{"1":"CL600-2D24","2":"34.83628"},{"1":"DC-9-32","2":"35.30276"},{"1":"S55A","2":"35.31224"},{"1":"DC-9-83(MD-83)","2":"35.48960"},{"1":"EMB-145XR","2":"35.54657"},{"1":"F85P-1","2":"35.64103"},{"1":"SAAB 340B","2":"35.65333"},{"1":"","2":"35.72262"},{"1":"182P","2":"35.77102"},{"1":"DC-9-82(MD-82)","2":"35.91223"},{"1":"737-4S3","2":"35.93906"},{"1":"206B","2":"35.94391"},{"1":"PA-32RT-300","2":"35.95885"},{"1":"C90","2":"35.97953"},{"1":"EMB-145","2":"36.11466"},{"1":"OTTER DHC-3","2":"36.16713"},{"1":"HST-550","2":"36.35747"},{"1":"60","2":"36.45589"},{"1":"T210N","2":"36.59196"},{"1":"757-223","2":"36.62782"},{"1":"EMB-145LR","2":"36.77258"},{"1":"210-5(205)","2":"36.89498"},{"1":"172M","2":"36.91364"},{"1":"KITFOX IV","2":"36.92337"},{"1":"172E","2":"36.96346"},{"1":"550","2":"37.14487"},{"1":"421C","2":"37.40592"},{"1":"S-50A","2":"37.42757"},{"1":"PA-32R-300","2":"37.54889"},{"1":"EMB-135LR","2":"37.67135"},{"1":"767-323","2":"37.79173"},{"1":"FALCON XP","2":"38.01519"},{"1":"150","2":"38.12833"},{"1":"CL-600-2C10","2":"38.13569"},{"1":"CL-600-2B19","2":"38.31531"},{"1":"A-1B","2":"38.44297"},{"1":"PA-31-350","2":"38.61129"},{"1":"A319-131","2":"39.01333"},{"1":"737-522","2":"39.42683"},{"1":"EMB-145EP","2":"39.47048"},{"1":"767-2B7","2":"39.51093"},{"1":"DC-7BF","2":"39.65809"},{"1":"S-76A","2":"40.08457"},{"1":"690A","2":"40.52669"},{"1":"737-322","2":"40.54540"},{"1":"737-524","2":"41.57121"},{"1":"PA-28-180","2":"41.91253"},{"1":"DHC-8-202","2":"41.92173"},{"1":"767-201","2":"42.12583"},{"1":"1121","2":"42.81053"},{"1":"747-451","2":"43.26923"},{"1":"747-422","2":"45.18182"},{"1":"ERJ 190-100 IGW","2":"46.88254"},{"1":"ATR 72-212","2":"47.25101"},{"1":"ATR-72-212","2":"47.66349"},{"1":"EMB-135ER","2":"47.79186"},{"1":"DHC-8-102","2":"52.54545"},{"1":"A330-323","2":"54.28571"},{"1":"A330-223","2":"105.64706"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":["NA"]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="which-of-the-following-companies-has-the-highest-number-of-cancelled-flights" class="section level3">
+<h3>Which of the following companies has the highest number of Cancelled
+flights?</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucTIgPC0gaW5uZXJfam9pbihmbGlnaHRzLCBjYXJyaWVycywgYnk9YyhcIlVuaXF1ZUNhcnJpZXJcIj1cIkNvZGVcIikpICU+JVxuICBmaWx0ZXIoRGVzY3JpcHRpb24gJWluJSBjKFwiVW5pdGVkIEFpciBMaW5lcyBJbmMuXCIsIFwiQW1lcmljYW4gQWlybGluZXMgSW5jLlwiLCBcIlBpbm5hY2xlIEFpcmxpbmVzIEluYy5cIiwgXCJEZWx0YSBBaXIgTGluZXMgSW5jLlwiKSkgJT4lXG4gIGdyb3VwX2J5KERlc2NyaXB0aW9uKSAlPiVcbiAgc3VtbWFyaXplKGNhbmNlbGxhdGlvbnMgPSBzdW0oQ2FuY2VsbGVkLCBuYS5ybSA9IFRSVUUpKSAlPiVcbiAgYXJyYW5nZShkZXNjKGNhbmNlbGxhdGlvbnMpKVxucTJcbmBgYCJ9 -->
+<pre class="r"><code>q2 &lt;- inner_join(flights, carriers, by=c(&quot;UniqueCarrier&quot;=&quot;Code&quot;)) %&gt;%
+  filter(Description %in% c(&quot;United Air Lines Inc.&quot;, &quot;American Airlines Inc.&quot;, &quot;Pinnacle Airlines Inc.&quot;, &quot;Delta Air Lines Inc.&quot;)) %&gt;%
+  group_by(Description) %&gt;%
+  summarize(cancellations = sum(Cancelled, na.rm = TRUE)) %&gt;%
+  arrange(desc(cancellations))
+q2</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9TUUxpdGVDb25uZWN0aW9uIiwidGJsX2RiaSIsInRibF9zcWwiLCJ0YmxfbGF6eSIsInRibCJdLCJucm93IjpbXSwibmNvbCI6Miwic3VtbWFyeSI6eyJTb3VyY2UiOlsiU1FMIFs/PyB4IDJdIl0sIkRhdGFiYXNlIjpbInNxbGl0ZSAzLjM5LjMgWy9Vc2Vycy9iYXN0aWVud2luYW50L0Rlc2t0b3AvVW5pdmVyc2l0eS9kYXRhLXNjaWVuY2UtYW5kLWJ1c2luZXNzLWFuYWx5dGljcy9wcm9ncmFtbWluZy1mb3ItZGF0YS1zY2llbmNlL3N0MjE5NV9hc3NpZ25tZW50XzMvYWlybGluZTIuZGJdIl0sIk9yZGVyZWQgYnkiOlsiZGVzYyhjYW5jZWxsYXRpb25zKSJdfX0sInJkZiI6Ikg0c0lBQUFBQUFBQUEyMVJ6VXJFTUJDZS9pbGJXVjFROTl3WGFEMkk0SFd4Q0lJSEVSZjJHdFBvQnJOcFNiTG9jZC9Db3cvaDY4bldTWnVBQkFOTlo3NXY1cHVmUE5hcnkzeVZBMEFDYVJ4QmtxRUoyZkxwdHJ3R1JOQ0pJSVdKL1g5ZzBDa2FGcHpobHpwaXZ0Z3d4U21SeFlJcndTWFR4WjJrbFdQUGw1SWIxbGl1dUEvSnM1b0pRLzduNWc5Y1NrSUZDMlFCcGtOeCtQd0dXSDhCM0dpQWl6VG9kcUxhOTBxU0RkTXVJZDdoMWZmOVR4Q1krYURaTU5vSUh0Vk1VOFU3dzF2cG9Da09TSmtReEdJNkZLR0NhQy9pd2J3aGhsUXZDdlhSMndjcGgyM25sR0s3MUN4SWpsUUFuR3lsN2JRcDZYb3IzOG9yVzJDZ3gyTkhqSFovN1BHaGJNbWtkMUtaa3pwZzhoWDM2WHNYNUprSjV4emoyb2FGVkozaTB2aEpFTldWYVEzeGNUbHRoVWVHMldEL0MxZllEU05MQWdBQSJ9 -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Description"],"name":[1],"type":["chr"],"align":["left"]},{"label":["cancellations"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"American Airlines Inc.","2":"38835"},{"1":"United Air Lines Inc.","2":"26783"},{"1":"Delta Air Lines Inc.","2":"17267"},{"1":"Pinnacle Airlines Inc.","2":"12036"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":["NA"]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="which-of-the-following-cities-has-the-highest-number-of-inbound-flights-excluding-cancelled-flights" class="section level3">
+<h3>Which of the following cities has the highest number of inbound
+flights (excluding cancelled flights)?</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucTMgPC0gaW5uZXJfam9pbihmbGlnaHRzLCBhaXJwb3J0cywgYnk9YyhcIkRlc3RcIj1cImlhdGFcIikpICU+JVxuICBmaWx0ZXIoQ2FuY2VsbGVkID09IDApICU+JVxuICBncm91cF9ieShjaXR5KSAlPiVcbiAgc3VtbWFyaXplKGluYm91bmRfZmxpZ2h0cyA9IG4oKSkgJT4lXG4gIGFycmFuZ2UoZGVzYyhpbmJvdW5kX2ZsaWdodHMpKVxucTNcbmBgYCJ9 -->
+<pre class="r"><code>q3 &lt;- inner_join(flights, airports, by=c(&quot;Dest&quot;=&quot;iata&quot;)) %&gt;%
+  filter(Cancelled == 0) %&gt;%
+  group_by(city) %&gt;%
+  summarize(inbound_flights = n()) %&gt;%
+  arrange(desc(inbound_flights))
+q3</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9TUUxpdGVDb25uZWN0aW9uIiwidGJsX2RiaSIsInRibF9zcWwiLCJ0YmxfbGF6eSIsInRibCJdLCJucm93IjpbXSwibmNvbCI6Miwic3VtbWFyeSI6eyJTb3VyY2UiOlsiU1FMIFs/PyB4IDJdIl0sIkRhdGFiYXNlIjpbInNxbGl0ZSAzLjM5LjMgWy9Vc2Vycy9iYXN0aWVud2luYW50L0Rlc2t0b3AvVW5pdmVyc2l0eS9kYXRhLXNjaWVuY2UtYW5kLWJ1c2luZXNzLWFuYWx5dGljcy9wcm9ncmFtbWluZy1mb3ItZGF0YS1zY2llbmNlL3N0MjE5NV9hc3NpZ25tZW50XzMvYWlybGluZTIuZGJdIl0sIk9yZGVyZWQgYnkiOlsiZGVzYyhpbmJvdW5kX2ZsaWdodHMpIl19fSwicmRmIjoiSDRzSUFBQUFBQUFBQTExWmU0eGNWUjMremV5OFoxOU5BUWxnbVZZZUxiQmRFUkVVUkdiMjJlNU9kOWpaZGxzVTVPemNzek9IdVhQUGVCKzdPL2dBRVlPZ3NTcWE0Q05VTkFZRkE0a3hCQk14TVVSU0NQZ0h4S2hFQkJWQlJERytNVkhxZDJibW5IdW5UYjd1bm52UDQvZjRmbzl6ZDNuNjhDVzV3emtpR3FKRVBFWkRTZnhLeVlNcnN4T1hFNTVnRUtNRVpkWFBMVXphamwvVXczR01KL292MGxNTlVXTjFxWWRGMzJhT3ovckRiZFBNdHBrM01TdGR2N0NLL3hwNjNyd01QRjg2L1dIbUFOOHNISkZ1c3o5T1RYTm5nN3Y5VVg1UmVvV2lVK2MyOS9UNlNrTnlSMnoxaDlsRjVoVU84VG96NzZlNTcwcmg2LzJ3UHpPN2oxYVo3UmNXV1pNWHBvVGYwYWVVaGVOdzFwYTIwTHVNVkpsVG1IV1pVeE5lemFpNDVFSkZTdzlUSlJsUkpEdlZZSzR0ZlorYkIzSkRPUFhJakJJT0Z5M3A2aG5wS21lK2IrdmhjS1VoYkdaeHU5MFEyb3haSmNlMDRNYk02aGpIRjdhdGhjOFdYWHZ3bUNtYmIzQWxhUDlCY29XMTJzem93SnFSZDZPei9sN1lJN0M0YXpFalNick1XeEJDR3lOVGdmK2lHNVlGYXduOWNsNDYwZzdzUUkrck1MQU16T0wwTXZZVjlZWjVEWVgyUzA4ZmxWOWdqZ2NYUnR5UlBjQzh4Z1pVMUhOeVZWWnpXWXM3dmpGOWoxMFJJL2tNUE5GS3BvcWdtTkFHeVZXRTczdHJnV3VFeUNzaGl0ak9FWHJINFgyT0paZ3pRSUo4MFY0TFBoUndGekRtdzBtdVdaV1pndXF0dGNDc1VHd0dTemlVMGh2dlo3V21KNTJvUXVsUzRLNHhSN055WkZVNGxpZGQyQTFUK3cvSFZybm5GeXJNYmhWS25OVzA2Rm5sc0hLSHUwYjVzckEzV2REa2V2UFVTbER6REJzU3k5eVI0YkhyNjh6V3crUlNpeldZTVpJTHVscmNxZWw5UnBaQWxJWnNzYWh2ZXU0TG1ONCt2Y0FhOEwwbVEzSWxzRDFEdFJrYjhudjZ1RnhKdUMwd3RjRmEra21YSndPZUxpUGlHbERjWklEc3NoeDhrRDRnM1hWcGE5dGxsa1d0MFpLR205a2lOcEF1cStzdGt5VXBETnR5M1NEbGtiQWRod2N4M1pLRmF0dUZkTWFUaTBLRlpnSEg2Nk9HNTVBUHJNSXlhd3RMVDB1QklzelIxa24zZmExUG0rWmVvU3lGRXlhdmFsczJtV05jTmV0eXo3Z251U2dhaG1oZ2VDZVVFbEVpN0lCTkxrakQ4WkVlNlVzTVRIS05GK2RjemgxdlRib3l0TEZUSDJCUWVoVVdFeVpSRDNjcE5xZzh2THpCSEllWkpXVm1pVkN2SGJPc3c1SG91cDZiN0MxVjJXTnlXZFpEWW1hcUhaZlZBbVA3cEpMTnVIWEJrVnRSenlmM2ViWm9tL2pzN3JrdXVLMzkybzgwa3hqekpRYnp3RDJCOFhTMkF0VlpUZHBHdFZYb3lRc1ZtNGt3SEtlNHhkeEJKMllYK2RaQUNrMFdtNjRacEJlRHRiV1FCYm41d1BFSFNKdVlGeWFtTW1YcGdLdThZMll6MXhYZDVHT1NXY05GZm00anBScnJDaXVTWFRQRkZqS01iYlpNbFpHU0RHV3lYUS9EN2ZxRTVDemUrcUhqWEVTY2NlN29sSFRiQWJKckEwTDRPa3JINWdKN1hRa3dVWUxrVy9weERsbHBzSlNNcVdoZlJJd1dsdGFFMXphY09zVHNOZzRTSnJhSHl4MVhSVXVVWjZrWnVNYkluYThLR1d3VlpwRzNUVENVdWJVdVhTdlVjMDJFeFJDWlZJbFl3RSs5SU5kckpsZ250TVlpVys5eE1hUkZFeFNNTWljTEZ5aTF1Q21RUmZnT3lYL1RVWU1UK0djczMyN2JQRlEvWFpJMzhaYkpkY2xaNXBvNm5LcHc2Um8ycGhjVUg4d0p1Um1FendCSHNyTk1kRk8rMW1XMGwwejJCMDdORjJIRzZQSXltbkRUNVZwWFhDMGlQR1pISWpXN3dHeldZamRKaytNWGNUSW1HQ1o3YmJNNGorem4rOHlSc200cUpRVGdMRERXczZWc0RWQWdQUjFBMEZEdGtocm9LTTZ0Q250d2VxWXNQRThHSmdUVHl4TG5OWTE3VmxUZGJqRFBNK1ZxWk1WbGFQaThnWTVzcEpmOTJHRGlXdVpXSk5QblZLalZaWXU3cGppQks5RXlQMUowYTh4bmt6T0J5NXRoUitVWDV1QTdrellTUjRLV01jY1VnNzIwZXNrWlZnOXI5cUp3a0Z0Q0Vua05QdGlreU1CdlFHQWpZTHJLNnNKaG0xcjNmUmJLNlVBRWpKdWVzWUNndDRVeFV3V2R5R0RoelNQdW1UK3dPaldQb21BeWpXSUNZcFRiZG1SejlIMmk3a3dlVk5RekxpbXFNRE1obEN2YWZBdFVETW1NZlR0V2xIRWVFcExKZjkwTTU0WU5YTG9zTFZWUXd5aDJYS2xmbmdxQ05MazNnU3Jsb2xLZ2kzTkNycVJXcE0xTk41MUVxMkE2N2RRaWM4TlgyUVh1bzJRMVRTUW1WcG1aMmtzSzFaWXdONHlSZm9FYlREYkZvSTZta0lVSGJJYVM1RlkyaFRNd1BWdm05cG9NM0dpbUtVeEI3YkJ4bldPcXNFY3BNQnl0aXhIU1dtRTg1a3N1OHM1Z2FxaElzSlNIQ1Q4eFl6ZjE3L2xlbFMrejBEM1pXWnZWb2NuNnV2RVhya2ZHdmJsZWI0c3JrOTVqREtYVDVuVmVxUG9za210UzAyamNqTkdTS3gzYkVEODFMZjJHc2ZhWVllbUEzS21sTFllWjdBMGFJTzJZcUU2WFZNR1Jtb3ZaWWoxQUMyR0hlV0U2NkxiVytuUjFselQ2VDBuTFZMZXE4RTNvWnZhMUVKeUM2VjJIZXhlNVhrdW41OHdGamhQcFZSSXpyZ21yN0FxWTdqYkRVTUJGeHBHbWRpN3dUa0UxM1hxTUttZkprREtaQmVuZnhOZU16Qm5WV1cwSXJ1TTdjUUM1S0l4V2xkMUJUWlB3VXlYdU43Z1dmV1FLblY4TlZTZ2E0OGt5YUIzZUZ0M0E4VFpGR0hqN25BNHlxV3U2TUgzM21JQmYzV2JYTlJPOVM0TU1PNExzWWdjTmNhVC9TRlprMk9PakorODI1TkVFRGd1cm01Q2VYZ3JDNnBwR08ySEpqZkRPd05IclJKdWJ6S29xRm1FT1NoOWh6UUNzTXliam15TFNmS2RVWHBEYWdLa1pGQlBUeW1abTBaZEhyeU85N3d1aU5uQWRVZTE1cElmSVRuTm1vZjAzVVpwYWtGREdmRnhZQ2RwaFhLUU9zSFpJbkpGK2o0VHk2WE5UWTBxOFcyN0RPMHYzZTBVcDlFSzNIUndvZ2FlZ1pnV29VLzZrdWpZWGlxN2ZDTXpsWmNYbGtReUl0c0dKbUNOWlJSTnREbEo5ZWVST0R2TGFkZ0RmR05WZ1cyRXFWeDViMVF2WW9CVm10VjZyR3pGWHJ0ZUVSWjZNZHdselJHV2ZUU1dKSVhjRmp5S2lvWTU3bTZGZmNVVjMvS0RXNUthSG5jZkZMZElrVDR1VDdKYnR1bjZBS2toNlNDdmFHNmRYa0Q1Z0tjK2Y3RlpTbUxoUWlWeWQ4c3NOakZTZmJOSlVvbWdaMTI3ZnAvcHVwNXZnbUQyUXk1RVNFTVViNXBLZVFUWmxmaVBTNXZHV3NHNDBIelRtVkNTRnBNL05zS0F3aFR1RStXNHpyRmgzOHBXcEhIaE5YZzgzblVma1N0T2FKSmZxa1pJNjFlQWQ3aGhqSjlYZE8yd3NBNzRXY3JRaXVHc096aXJ5emFOZE1pN3UzZ2FpV1RsZnJVbjF0Y01PVEgwWVBxQSt2NmxyVUNTU1VXQlpDNWtSeE85KzB4dlBQVVdqNVhzcGQvVWlpdDhMbExuMktPUWNwY3pGZjZkMHNKOVNuVXNwdWI1Q3llVVlKYzlDMVhoMUR5VWUyVWtKL3o1S09JOVJZdjgzS0pFNm00YWVER2pvZUkyR0hyaVdoZzUvbTRaMmY1aUd6citENGs5ZlIvSGp6MUg4N2pNcDdqOUE4ZG9URkwvbU9NWEx4eWgrMWNQQXB5aCswVDBVUDNjdnhjOTVoZUk3WHFIWUd6K20yTE1mcDlnelNZcDkveldLM2Y4SGl0M1ZvcGp6UDRwWk4xQ01QVUd4UTY5VDdOMmZvZGhsTDFMc0hFR3hYVzlRYlBoR29oTmJSUDk4RDdDSDZHOS9KSHE5UmZUeWswUXZ2VWIwL0wxRXYvb3kwWE83aVo0NWoranhBMFNQblViMDZMZUlmbmcrMGNNL0lYcm9yVVFQVm9pKyt4MmlZOWNRZmUxVm9xOWNSUFNsdTRrK255TTZlaHg0aU9qVFphSTdNZmVPNjRodSt5M1JKN1lUM1lwM04xOEpqQko5Wkp6b0p0dzBPc2VBZTRoOHlPUmVEVnhNWko5QzFQd2wwWTIvSnhKNUl2WkpvdXVmSjdvV2ZqbDBKOUhCQjRDalJGV01LOHRFUy84aVdzd1FMVnhDdEE5eXpmMEMrQ3pSN09QQUI0QWxvcG1kUk5PL0ppcmh2TklaUkZmdElIcnY5NGl1M0VWMHhYNml5MzhLYkFLelJKZmkvSGUyaWQ0QmVkLytUZUIyb2ttY053a2RKaXdBK2s5Z3Y0dWVCYURuaGY4QmZnNDhEVUMrQzJIYkN4cEVlMkNIUFM3UmJzaSsrMUhnL1VUbi9RbDRpZWh0QVhBdTBTN3N2K3N3MGM0M2dMOEE4TWxPNkx0emdxaUFlWVVmQVQ4QVlMZXovd0ZBbHgyUWE4Zjl3RUhnVXFLemlzQUZ3QkRSbVY4RlBrZDB4dThBckRrRHVwNytid0I3bi80YjRBcmdYVUFLQU0zZjhnandJSkFtT2czNm5GcENxbjRCZ0w2bjNBekFWOXVoMzNhY3R6MUJ0QTB5YmZzQ0FGMjJZVHorTXdCMkhNT2FNZkJvN092QUZ3SElNQWJiai80WmVCRTRBc0RISXdpejRiOENrSE1ZL2g5R25PVmhtenpza0w5TFhRZFVtNEFRaHM0NXlKa0R0N0pQQWRnN2U2d1BjQzE3dEEvNE9RUC9aNkJmQm43UDNBZGczd3pPU1g4TUFJL1Q4RnRhWlkzYkFQZzRoZmNwOEQ3RlZIVUYzZ2VjQ2tDZkpIaVhmQWFBSHhQL0JXRHpCSHljQUVlR2J1OERQQjJDZitLUU1XNEQ4RU1jYytJTEFQYUxUd1BxUFd3WFYza0Vzc1hnMXhqV3htNEZQZ3BjRDF3R29WNEd3QThDVnduY0pjaE1IbkFEQUYvUTFYMmMwOHRKcFA0NmtWRlp2Zy80bkhwL21EQVkrRU5GRnAzRVhseWJ1TmZmSUg0TC9qdHg0czFuVDVxWTFKUEd1enYyYTBrdExJcGp3a0h2NzFnZlhMZEZ2ZUY3SjYrdjJiakE5dGZyaHprTE44Mjk2K296TlVadm5yUWtMZHVxTUdGUlhQMHBKWG5TNHBoNzBvTXhOTEhZeVpxb05RS25PWEZ4M3h4S2JlcHJGN3NsOG52UE5PcklvUlA5clpLNmduQ25IbjQrU3Rwc3pUU2hvK291b215eFY1VXlYY3B6ZU9ydDlhVnYrdXdjN3IzNlNWYzNldlAvUktTbXVrRWFBQUE9In0= -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["city"],"name":[1],"type":["chr"],"align":["left"]},{"label":["inbound_flights"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"Chicago","2":"1051340"},{"1":"Atlanta","2":"937377"},{"1":"Dallas-Fort Worth","2":"671820"},{"1":"Houston","2":"609759"},{"1":"New York","2":"547471"},{"1":"Denver","2":"541454"},{"1":"Los Angeles","2":"537075"},{"1":"Phoenix","2":"488778"},{"1":"Las Vegas","2":"424245"},{"1":"Detroit","2":"353876"},{"1":"Newark","2":"348673"},{"1":"Salt Lake City","2":"334952"},{"1":"Minneapolis","2":"321833"},{"1":"San Francisco","2":"309281"},{"1":"Orlando","2":"292007"},{"1":"Boston","2":"290499"},{"1":"Charlotte","2":"281250"},{"1":"Covington","2":"263711"},{"1":"Baltimore","2":"248437"},{"1":"Seattle","2":"247907"},{"1":"Philadelphia","2":"240474"},{"1":"San Diego","2":"219304"},{"1":"Chantilly","2":"206971"},{"1":"Arlington","2":"206729"},{"1":"Cleveland","2":"183645"},{"1":"Tampa","2":"182490"},{"1":"Oakland","2":"170011"},{"1":"Ft. Lauderdale","2":"160939"},{"1":"Memphis","2":"156617"},{"1":"Portland","2":"152008"},{"1":"Miami","2":"150943"},{"1":"Honolulu","2":"147126"},{"1":"St Louis","2":"147080"},{"1":"Raleigh","2":"142494"},{"1":"San Jose","2":"140590"},{"1":"Kansas City","2":"140519"},{"1":"Nashville","2":"138983"},{"1":"Sacramento","2":"129217"},{"1":"Dallas","2":"119681"},{"1":"Santa Ana","2":"119301"},{"1":"Austin","2":"111851"},{"1":"Pittsburgh","2":"109288"},{"1":"San Antonio","2":"103277"},{"1":"Indianapolis","2":"93949"},{"1":"Albuquerque","2":"91232"},{"1":"Ontario","2":"90569"},{"1":"Columbus","2":"87790"},{"1":"New Orleans","2":"80268"},{"1":"Jacksonville","2":"79840"},{"1":"Burbank","2":"74857"},{"1":"Windsor Locks","2":"74488"},{"1":"West Palm Beach","2":"68714"},{"1":"Ft. Myers","2":"65400"},{"1":"Milwaukee","2":"62778"},{"1":"Tucson","2":"62761"},{"1":"Reno","2":"62186"},{"1":"Buffalo","2":"61037"},{"1":"Omaha","2":"59082"},{"1":"Providence","2":"58603"},{"1":"Oklahoma City","2":"56737"},{"1":"San Juan","2":"56473"},{"1":"Kahului","2":"55848"},{"1":"Tulsa","2":"53798"},{"1":"El Paso","2":"50766"},{"1":"Birmingham","2":"49942"},{"1":"Louisville","2":"48549"},{"1":"Manchester","2":"48167"},{"1":"Rochester","2":"46789"},{"1":"Norfolk","2":"44829"},{"1":"Richmond","2":"44624"},{"1":"Anchorage","2":"44201"},{"1":"Boise","2":"40785"},{"1":"Charleston","2":"40169"},{"1":"Colorado Springs","2":"39468"},{"1":"Little Rock","2":"38296"},{"1":"Grand Rapids","2":"37130"},{"1":"Albany","2":"36808"},{"1":"Jackson","2":"36783"},{"1":"Des Moines","2":"35661"},{"1":"Spokane","2":"35357"},{"1":"Fresno","2":"35165"},{"1":"Lihue","2":"34018"},{"1":"Dayton","2":"33555"},{"1":"Kailua/Kona","2":"33480"},{"1":"Santa Barbara","2":"32572"},{"1":"Greensboro","2":"32526"},{"1":"Long Beach","2":"31760"},{"1":"Wichita","2":"31342"},{"1":"Palm Springs","2":"31135"},{"1":"Savannah","2":"31134"},{"1":"Madison","2":"29754"},{"1":"Fayetteville/Springdale/Rogers","2":"29248"},{"1":"Syracuse","2":"29233"},{"1":"Greer","2":"27668"},{"1":"Knoxville","2":"27609"},{"1":"Islip","2":"27365"},{"1":"Springfield","2":"26891"},{"1":"Columbia","2":"24965"},{"1":"Baton Rouge","2":"24285"},{"1":"Pensacola","2":"23141"},{"1":"White Plains","2":"22154"},{"1":"Cedar Rapids","2":"21931"},{"1":"Lexington","2":"21903"},{"1":"Akron","2":"21349"},{"1":"Lubbock","2":"20562"},{"1":"Huntsville","2":"20470"},{"1":"Hilo","2":"19464"},{"1":"Monterey","2":"19251"},{"1":"Harrisburg","2":"18857"},{"1":"Shreveport","2":"18392"},{"1":"Midland","2":"18318"},{"1":"Amarillo","2":"18118"},{"1":"Moline","2":"18012"},{"1":"Green Bay","2":"17999"},{"1":"Flint","2":"17697"},{"1":"Sarasota","2":"17630"},{"1":"Corpus Christi","2":"17055"},{"1":"Gulfport-Biloxi","2":"16922"},{"1":"Burlington","2":"15902"},{"1":"San Luis Obispo","2":"15794"},{"1":"Valparaiso","2":"15394"},{"1":"Myrtle Beach","2":"15178"},{"1":"Eugene","2":"14542"},{"1":"Sioux Falls","2":"14455"},{"1":"Medford","2":"14406"},{"1":"Mobile","2":"13588"},{"1":"Newport News","2":"13424"},{"1":"Fort Wayne","2":"13000"},{"1":"Lafayette","2":"12451"},{"1":"Bakersfield","2":"12423"},{"1":"Harlingen","2":"12175"},{"1":"Allentown","2":"12051"},{"1":"NA","2":"11620"},{"1":"Appleton","2":"11600"},{"1":"Bozeman","2":"11553"},{"1":"Fargo","2":"11475"},{"1":"Peoria","2":"11341"},{"1":"Killeen","2":"11257"},{"1":"Evansville","2":"11223"},{"1":"Fairbanks","2":"11213"},{"1":"Grand Junction","2":"11146"},{"1":"Rapid City","2":"11049"},{"1":"McAllen","2":"10856"},{"1":"Billings","2":"10671"},{"1":"Kalamazoo","2":"10610"},{"1":"Lansing","2":"10461"},{"1":"Aspen","2":"10429"},{"1":"Chattanooga","2":"10331"},{"1":"Juneau","2":"9964"},{"1":"Bloomington","2":"9956"},{"1":"Durango","2":"9077"},{"1":"Bangor","2":"8997"},{"1":"Wilmington","2":"8867"},{"1":"Missoula","2":"8792"},{"1":"Roanoke","2":"8696"},{"1":"Tallahassee","2":"8687"},{"1":"Traverse City","2":"8682"},{"1":"Daytona Beach","2":"8581"},{"1":"Redmond","2":"8493"},{"1":"Montgomery","2":"8420"},{"1":"Newburgh","2":"8382"},{"1":"Arcata/Eureka","2":"8377"},{"1":"St George","2":"8252"},{"1":"Yuma","2":"8180"},{"1":"Casper","2":"8015"},{"1":"Eagle","2":"7880"},{"1":"Lincoln","2":"7850"},{"1":"Asheville","2":"7765"},{"1":"South Bend","2":"7733"},{"1":"Saginaw","2":"7233"},{"1":"Idaho Falls","2":"7210"},{"1":"Charlotte Amalie","2":"7171"},{"1":"Panama City","2":"7067"},{"1":"Great Falls","2":"7056"},{"1":"Hailey","2":"6883"},{"1":"Kalispell","2":"6716"},{"1":"Champaign/Urbana","2":"6682"},{"1":"Abilene","2":"6391"},{"1":"Alexandria","2":"6383"},{"1":"Hayden","2":"6369"},{"1":"Bismarck","2":"6203"},{"1":"Montrose","2":"6198"},{"1":"Modesto","2":"6150"},{"1":"Monroe","2":"6144"},{"1":"Wilkes-Barre/Scranton","2":"6072"},{"1":"Toledo","2":"6062"},{"1":"Pasco","2":"5895"},{"1":"Laredo","2":"5843"},{"1":"Ketchikan","2":"5442"},{"1":"Waco","2":"5343"},{"1":"Fort Smith","2":"5263"},{"1":"Wichita Falls","2":"5247"},{"1":"Augusta","2":"5134"},{"1":"Lawton","2":"5113"},{"1":"Twin Falls","2":"5034"},{"1":"Melbourne","2":"4868"},{"1":"La Crosse","2":"4580"},{"1":"Gainesville","2":"4498"},{"1":"Fayetteville","2":"4443"},{"1":"Redding","2":"4356"},{"1":"Brownsville","2":"4309"},{"1":"Pocatello","2":"4274"},{"1":"Elko","2":"4063"},{"1":"Santa Maria","2":"4042"},{"1":"Flagstaff","2":"4000"},{"1":"Helena","2":"3988"},{"1":"San Angelo","2":"3984"},{"1":"College Station","2":"3932"},{"1":"Duluth","2":"3821"},{"1":"Tyler","2":"3808"},{"1":"Dothan","2":"3673"},{"1":"Charlottesville","2":"3642"},{"1":"Oxnard","2":"3337"},{"1":"Mosinee","2":"3313"},{"1":"Bristol","2":"3227"},{"1":"Aguadilla","2":"3182"},{"1":"Dubuque","2":"3085"},{"1":"Chico","2":"3005"},{"1":"Cody","2":"2979"},{"1":"Sitka","2":"2963"},{"1":"Imperial","2":"2889"},{"1":"Lake Charles","2":"2887"},{"1":"Gunnison","2":"2745"},{"1":"Erie","2":"2614"},{"1":"Texarkana","2":"2604"},{"1":"Minot","2":"2508"},{"1":"Key West","2":"2506"},{"1":"Valdosta","2":"2463"},{"1":"Kotzebue","2":"2463"},{"1":"Longview","2":"2456"},{"1":"Nome","2":"2447"},{"1":"Grand Forks","2":"2447"},{"1":"Bethel","2":"2446"},{"1":"Crescent City","2":"2294"},{"1":"Macon","2":"2287"},{"1":"Brunswick","2":"2264"},{"1":"Inyokern","2":"2215"},{"1":"Columbus-Starkville-West Point","2":"2158"},{"1":"Lynchburg","2":"2057"},{"1":"Ponce","2":"1918"},{"1":"Binghamton","2":"1830"},{"1":"Meridian","2":"1811"},{"1":"Butte","2":"1792"},{"1":"Cordova","2":"1668"},{"1":"Petersburg","2":"1655"},{"1":"Wrangell","2":"1646"},{"1":"Yakutat","2":"1645"},{"1":"Lewiston","2":"1633"},{"1":"Barrow","2":"1605"},{"1":"Elmira","2":"1599"},{"1":"Florence","2":"1557"},{"1":"Atlantic City","2":"1540"},{"1":"Rockford","2":"1497"},{"1":"Deadhorse","2":"1490"},{"1":"Kodiak","2":"1418"},{"1":"Tupelo","2":"1276"},{"1":"Naples","2":"1268"},{"1":"Christiansted","2":"1101"},{"1":"Bellingham","2":"1098"},{"1":"New Bern","2":"903"},{"1":"Huntington","2":"903"},{"1":"Beaumont/Port Arthur","2":"832"},{"1":"Trenton","2":"813"},{"1":"Kinston","2":"697"},{"1":"Salem","2":"620"},{"1":"Palmdale","2":"597"},{"1":"Telluride","2":"589"},{"1":"Yakima","2":"587"},{"1":"King Salmon","2":"581"},{"1":"Cedar City","2":"580"},{"1":"Sioux City","2":"557"},{"1":"West Yellowstone","2":"526"},{"1":"Pellston","2":"525"},{"1":"Roswell","2":"495"},{"1":"Nantucket","2":"490"},{"1":"Hancock","2":"391"},{"1":"Dillingham","2":"386"},{"1":"Lewisburg","2":"381"},{"1":"Waterloo","2":"350"},{"1":"Pinehurst/Southern Pines","2":"311"},{"1":"Rhinelander","2":"230"},{"1":"Adak","2":"221"},{"1":"International Falls","2":"198"},{"1":"Gustavus","2":"169"},{"1":"Marathon","2":"126"},{"1":"Bemidji","2":"115"},{"1":"Gillette","2":"96"},{"1":"Eau Claire","2":"66"},{"1":"Rock Springs","2":"64"},{"1":"Muskegon","2":"64"},{"1":"Hickory","2":"36"},{"1":"Ogden","2":"13"},{"1":"Cheyenne","2":"10"},{"1":"Provo","2":"8"},{"1":"Pueblo","2":"4"},{"1":"Pierre","2":"4"},{"1":"New Haven","2":"3"},{"1":"Greenville","2":"2"},{"1":"Scottsbluff","2":"1"},{"1":"North Platte","2":"1"},{"1":"Laramie","2":"1"}],"options":{"columns":{"min":{},"max":[10],"total":[2]},"rows":{"min":[10],"max":[10],"total":["NA"]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="which-of-the-following-companies-has-the-highest-number-of-cancelled-flights-relative-to-their-number-of-total-flights" class="section level3">
+<h3>Which of the following companies has the highest number of cancelled
+flights, relative to their number of total flights?</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucTQgPC0gaW5uZXJfam9pbihmbGlnaHRzLCBjYXJyaWVycywgYnk9YyhcIlVuaXF1ZUNhcnJpZXJcIj1cIkNvZGVcIikpICU+JVxuICBmaWx0ZXIoRGVzY3JpcHRpb24gJWluJSBjKFwiVW5pdGVkIEFpciBMaW5lcyBJbmMuXCIsIFwiQW1lcmljYW4gQWlybGluZXMgSW5jLlwiLCBcIlBpbm5hY2xlIEFpcmxpbmVzIEluYy5cIiwgXCJEZWx0YSBBaXIgTGluZXMgSW5jLlwiKSkgJT4lXG4gIGdyb3VwX2J5KERlc2NyaXB0aW9uKSAlPiVcbiAgc3VtbWFyaXplKG51bWVyYXRvciA9IHN1bShDYW5jZWxsZWQsIG5hLnJtID0gVFJVRSksIGRlbm9taW5hdG9yID0gbigpKSAlPiVcbiAgbXV0YXRlKHJhdGlvID0gYXMuZG91YmxlKG51bWVyYXRvcikgLyBkZW5vbWluYXRvcikgJT4lXG4gIGFycmFuZ2UoZGVzYyhyYXRpbykpXG4gcTRcbmBgYCJ9 -->
+<pre class="r"><code>q4 &lt;- inner_join(flights, carriers, by=c(&quot;UniqueCarrier&quot;=&quot;Code&quot;)) %&gt;%
+  filter(Description %in% c(&quot;United Air Lines Inc.&quot;, &quot;American Airlines Inc.&quot;, &quot;Pinnacle Airlines Inc.&quot;, &quot;Delta Air Lines Inc.&quot;)) %&gt;%
+  group_by(Description) %&gt;%
+  summarize(numerator = sum(Cancelled, na.rm = TRUE), denominator = n()) %&gt;%
+  mutate(ratio = as.double(numerator) / denominator) %&gt;%
+  arrange(desc(ratio))
+ q4</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9TUUxpdGVDb25uZWN0aW9uIiwidGJsX2RiaSIsInRibF9zcWwiLCJ0YmxfbGF6eSIsInRibCJdLCJucm93IjpbXSwibmNvbCI6NCwic3VtbWFyeSI6eyJTb3VyY2UiOlsiU1FMIFs/PyB4IDRdIl0sIkRhdGFiYXNlIjpbInNxbGl0ZSAzLjM5LjMgWy9Vc2Vycy9iYXN0aWVud2luYW50L0Rlc2t0b3AvVW5pdmVyc2l0eS9kYXRhLXNjaWVuY2UtYW5kLWJ1c2luZXNzLWFuYWx5dGljcy9wcm9ncmFtbWluZy1mb3ItZGF0YS1zY2llbmNlL3N0MjE5NV9hc3NpZ25tZW50XzMvYWlybGluZTIuZGJdIl0sIk9yZGVyZWQgYnkiOlsiZGVzYyhyYXRpbykiXX19LCJyZGYiOiJINHNJQUFBQUFBQUFBMjFSelVyRFFCQ2V0STNTaU5XaTlsekVheVBZaTdkUUxPSlBRUkVMdmE3SmFoZVQzWkpzcVhpeGIrREJRMUdFNGlPSUQrRGRxL2dhM2dRUDBqaWJkS1VFRjNaMzV2dG01dHVaUFdsMjZsYkhBb0E4RkhJRzVFMDB3V3lmN3RhMkFSRjBEQ2hBVWQxWEdMU0NSZ0gzY25LblJPV1ljVTVjbjFZYkxQUVpwMUYxbjd1Mlpoc0JEWmxMK0wvc1dwc3pTVDNGVlZ0WmNyVkpmVW15SE1CaStvaE4zS01YZ080WVlDZjZ3ODNXQVZRZXY2QXNQNkY4dUlkWVNlSE8wK3Q5a1padW5JZVB3Y1o2OE82TXZpZEh3K2VXYzF1L0h0L0JXNmJiWWlnR05pY0IxWVZ6UXp6aU9QN0pCSm82YUhZa0MwMGF1U0hyU1NhNExzajdPQWdpUmFoalBNcEZ3UGdNWkNMUFJGYkE5VW1rQlRSb2VVUVMrenhFYmZRbW1aUjVrU2hqVWs1OW1KbEpOc0lNc05UbnFndXY1bmI3L0xLMnBRUVNPbDJxZldNNFk2ZnpWNUw1ZUZyS25KYWFvL3dDLzBxLzNTZG4xSjg2SlJ4cE1peTdGekl1ZFNlSVJyWVVrdWc0eXhXK1JwTGVZUElMLzkza3lhY0NBQUE9In0= -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Description"],"name":[1],"type":["chr"],"align":["left"]},{"label":["numerator"],"name":[2],"type":["int"],"align":["right"]},{"label":["denominator"],"name":[3],"type":["int"],"align":["right"]},{"label":["ratio"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"Pinnacle Airlines Inc.","2":"12036","3":"347210","4":"0.03466490"},{"1":"American Airlines Inc.","2":"38835","3":"1481973","4":"0.02620493"},{"1":"United Air Lines Inc.","2":"26783","3":"1144046","4":"0.02341077"},{"1":"Delta Air Lines Inc.","2":"17267","3":"1133384","4":"0.01523491"}],"options":{"columns":{"min":{},"max":[10],"total":[4]},"rows":{"min":[10],"max":[10],"total":["NA"]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-frame-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<div id="close-the-database-connection" class="section level4">
+<h4>Close the database connection</h4>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGJEaXNjb25uZWN0KGNvbm4pXG5gYGAifQ== -->
+<pre class="r"><code>dbDisconnect(conn)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+</div>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUHJhY3RpY2UgYXNzaWdubWVudCAzIC0gUXVlc3Rpb25zIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgojIyMjIEltcG9ydCBsaWJyYXJpZXMKYGBge3J9CmxpYnJhcnkoREJJKQpsaWJyYXJ5KGRicGx5cikKbGlicmFyeShkcGx5cikKYGBgCgojIyMjIENvbm5lY3QgdG8gZGF0YWJhc2UgYW5kIGxpc3QgdGFibGVzCmBgYHtyfQpjb25uIDwtIGRiQ29ubmVjdChSU1FMaXRlOjpTUUxpdGUoKSwgIi4uL2FpcmxpbmUyLmRiIikKZGJMaXN0VGFibGVzKGNvbm4pCmBgYAoKIyMjIyBDcmVhdGUgcmVmZXJlbmNlcyBybyBlYWNoIHRhYmxlIGluIHRoZSBkYXRhYmFzZQpgYGB7cn0KZmxpZ2h0cyA8LSB0YmwoY29ubiwgIm9uX3RpbWUiKQpwbGFuZXMgPC0gdGJsKGNvbm4sICJwbGFuZXMiKQpjYXJyaWVycyA8LSB0YmwoY29ubiwgImNhcnJpZXJzIikKYWlycG9ydHMgPC0gdGJsKGNvbm4sICJhaXJwb3J0cyIpCmBgYAoKIyMjIFdoaWNoIG9mIHRoZSBmb2xsb3dpbmcgYWlycGxhbmVzIGhhcyB0aGUgbG93ZXN0IGFzc29jaWF0ZWQgYXZlcmFnZSBkZXBhcnR1cmUgZGVsYXkgKGV4Y2x1ZGluZyBDYW5jZWxsZWQgYW5kIERpdmVydGVkIGZsaWdodHMpPwpgYGB7cn0KcTEgPC0gaW5uZXJfam9pbihmbGlnaHRzLCBwbGFuZXMsIGJ5PWMoIlRhaWxOdW0iPSJ0YWlsbnVtIikpICU+JQogIGZpbHRlcihDYW5jZWxsZWQgPT0gMCAmIERpdmVydGVkID09IDAgJiBEZXBEZWxheSA+IDApICU+JQogIGdyb3VwX2J5KG1vZGVsKSAlPiUKICBzdW1tYXJpemUoYXZnX2RlbGF5ID0gbWVhbihEZXBEZWxheSwgbmEucm0gPSBUUlVFKSkgJT4lCiAgYXJyYW5nZShhdmdfZGVsYXkpCnExCmBgYAojIyMgV2hpY2ggb2YgdGhlIGZvbGxvd2luZyBjb21wYW5pZXMgaGFzIHRoZSBoaWdoZXN0IG51bWJlciBvZiBDYW5jZWxsZWQgZmxpZ2h0cz8KYGBge3J9CnEyIDwtIGlubmVyX2pvaW4oZmxpZ2h0cywgY2FycmllcnMsIGJ5PWMoIlVuaXF1ZUNhcnJpZXIiPSJDb2RlIikpICU+JQogIGZpbHRlcihEZXNjcmlwdGlvbiAlaW4lIGMoIlVuaXRlZCBBaXIgTGluZXMgSW5jLiIsICJBbWVyaWNhbiBBaXJsaW5lcyBJbmMuIiwgIlBpbm5hY2xlIEFpcmxpbmVzIEluYy4iLCAiRGVsdGEgQWlyIExpbmVzIEluYy4iKSkgJT4lCiAgZ3JvdXBfYnkoRGVzY3JpcHRpb24pICU+JQogIHN1bW1hcml6ZShjYW5jZWxsYXRpb25zID0gc3VtKENhbmNlbGxlZCwgbmEucm0gPSBUUlVFKSkgJT4lCiAgYXJyYW5nZShkZXNjKGNhbmNlbGxhdGlvbnMpKQpxMgpgYGAKCiMjIyBXaGljaCBvZiB0aGUgZm9sbG93aW5nIGNpdGllcyBoYXMgdGhlIGhpZ2hlc3QgbnVtYmVyIG9mIGluYm91bmQgZmxpZ2h0cyAoZXhjbHVkaW5nIGNhbmNlbGxlZCBmbGlnaHRzKT8KYGBge3J9CnEzIDwtIGlubmVyX2pvaW4oZmxpZ2h0cywgYWlycG9ydHMsIGJ5PWMoIkRlc3QiPSJpYXRhIikpICU+JQogIGZpbHRlcihDYW5jZWxsZWQgPT0gMCkgJT4lCiAgZ3JvdXBfYnkoY2l0eSkgJT4lCiAgc3VtbWFyaXplKGluYm91bmRfZmxpZ2h0cyA9IG4oKSkgJT4lCiAgYXJyYW5nZShkZXNjKGluYm91bmRfZmxpZ2h0cykpCnEzCmBgYAoKIyMjIFdoaWNoIG9mIHRoZSBmb2xsb3dpbmcgY29tcGFuaWVzIGhhcyB0aGUgaGlnaGVzdCBudW1iZXIgb2YgY2FuY2VsbGVkIGZsaWdodHMsIHJlbGF0aXZlIHRvIHRoZWlyIG51bWJlciBvZiB0b3RhbCBmbGlnaHRzPwpgYGB7cn0KcTQgPC0gaW5uZXJfam9pbihmbGlnaHRzLCBjYXJyaWVycywgYnk9YygiVW5pcXVlQ2FycmllciI9IkNvZGUiKSkgJT4lCiAgZmlsdGVyKERlc2NyaXB0aW9uICVpbiUgYygiVW5pdGVkIEFpciBMaW5lcyBJbmMuIiwgIkFtZXJpY2FuIEFpcmxpbmVzIEluYy4iLCAiUGlubmFjbGUgQWlybGluZXMgSW5jLiIsICJEZWx0YSBBaXIgTGluZXMgSW5jLiIpKSAlPiUKICBncm91cF9ieShEZXNjcmlwdGlvbikgJT4lCiAgc3VtbWFyaXplKG51bWVyYXRvciA9IHN1bShDYW5jZWxsZWQsIG5hLnJtID0gVFJVRSksIGRlbm9taW5hdG9yID0gbigpKSAlPiUKICBtdXRhdGUocmF0aW8gPSBhcy5kb3VibGUobnVtZXJhdG9yKSAvIGRlbm9taW5hdG9yKSAlPiUKICBhcnJhbmdlKGRlc2MocmF0aW8pKQogcTQKYGBgCgojIyMjIENsb3NlIHRoZSBkYXRhYmFzZSBjb25uZWN0aW9uCmBgYHtyfQpkYkRpc2Nvbm5lY3QoY29ubik=</div>
 
 
 
@@ -1873,7 +1981,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("ETL.Rmd");
+  window.initializeSourceEmbed("Questions.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>

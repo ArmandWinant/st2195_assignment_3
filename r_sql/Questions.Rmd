@@ -1,0 +1,69 @@
+---
+title: "Practice assignment 3 - Questions"
+output: html_notebook
+---
+
+#### Import libraries
+```{r}
+library(DBI)
+library(dbplyr)
+library(dplyr)
+```
+
+#### Connect to database and list tables
+```{r}
+conn <- dbConnect(RSQLite::SQLite(), "../airline2.db")
+dbListTables(conn)
+```
+
+#### Create references ro each table in the database
+```{r}
+flights <- tbl(conn, "on_time")
+planes <- tbl(conn, "planes")
+carriers <- tbl(conn, "carriers")
+airports <- tbl(conn, "airports")
+```
+
+### Which of the following airplanes has the lowest associated average departure delay (excluding Cancelled and Diverted flights)?
+```{r}
+q1 <- inner_join(flights, planes, by=c("TailNum"="tailnum")) %>%
+  filter(Cancelled == 0 & Diverted == 0 & DepDelay > 0) %>%
+  group_by(model) %>%
+  summarize(avg_delay = mean(DepDelay, na.rm = TRUE)) %>%
+  arrange(avg_delay)
+q1
+```
+### Which of the following companies has the highest number of Cancelled flights?
+```{r}
+q2 <- inner_join(flights, carriers, by=c("UniqueCarrier"="Code")) %>%
+  filter(Description %in% c("United Air Lines Inc.", "American Airlines Inc.", "Pinnacle Airlines Inc.", "Delta Air Lines Inc.")) %>%
+  group_by(Description) %>%
+  summarize(cancellations = sum(Cancelled, na.rm = TRUE)) %>%
+  arrange(desc(cancellations))
+q2
+```
+
+### Which of the following cities has the highest number of inbound flights (excluding cancelled flights)?
+```{r}
+q3 <- inner_join(flights, airports, by=c("Dest"="iata")) %>%
+  filter(Cancelled == 0) %>%
+  group_by(city) %>%
+  summarize(inbound_flights = n()) %>%
+  arrange(desc(inbound_flights))
+q3
+```
+
+### Which of the following companies has the highest number of cancelled flights, relative to their number of total flights?
+```{r}
+q4 <- inner_join(flights, carriers, by=c("UniqueCarrier"="Code")) %>%
+  filter(Description %in% c("United Air Lines Inc.", "American Airlines Inc.", "Pinnacle Airlines Inc.", "Delta Air Lines Inc.")) %>%
+  group_by(Description) %>%
+  summarize(numerator = sum(Cancelled, na.rm = TRUE), denominator = n()) %>%
+  mutate(ratio = as.double(numerator) / denominator) %>%
+  arrange(desc(ratio))
+ q4
+```
+
+#### Close the database connection
+```{r}
+dbDisconnect(conn)

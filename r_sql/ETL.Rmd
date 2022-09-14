@@ -29,7 +29,7 @@ process_data <- function(conn) {
   setwd('../../dataverse_files')
   
   for (file in list.files()) {
-    if (endsWith(file, 'bz2') && (grepl('^200(6|7|8){1}', file, ignore.case=FALSE))) {
+    if (endsWith(file, 'bz2') && (grepl('^200(0|1|2|3|4|5){1}', file, ignore.case=FALSE))) {
       process_data_file(file, conn, "on_time")
     } else if (startsWith(file, 'plane-data')) {
       process_data_file(file, conn, "planes")

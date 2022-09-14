@@ -1,2 +1,2 @@
-# st2195_assignment_3
-ST2195: Assignment III
+# ST2195: Programming for Data Science
+## Practice Assignment III

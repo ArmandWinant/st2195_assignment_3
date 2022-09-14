@@ -1,13 +1,19 @@
 ---
 title: "Practice assignment 3 - ETL"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
+
+## *R*
+> Load the files of [this dataset](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/HG7NV7) into an SQLite database.
 
 ```{r}
 source("create_tables.R")
 ```
 
-Load the given file's data into a table.
+#### Reading and uploading the data
+Read the data into Pandas dataframes, and leverage to_sql method to create and fill tables.
 ```{r}
 process_data_file <- function(file, conn, table_name) {
   df <- read.csv(file, header = TRUE)
@@ -15,7 +21,8 @@ process_data_file <- function(file, conn, table_name) {
 }
 ```
 
-This function loops through all the files in the data directory, and selectively applies the upload functions to create and fill tables.
+#### Apply ETL scripts to input files
+Loop through the files and selectively launch ETL scripts to store the data in SQLite tables.
 ```{r}
 process_data <- function(conn) {
   working_directory = getwd()
@@ -38,7 +45,7 @@ process_data <- function(conn) {
 }
 ```
 
-Run the database initialisation and uploading functions, then close connection.
+#### Run the database initialisation and uploading functions, then close connection.
 ```{r}
 conn = initialise_db()
 process_data(conn)

@@ -1,7 +1,12 @@
 ---
-title: "Practice assignment 3 - Questions"
-output: html_notebook
+title: "Practice Assignment III - Questions"
+output:
+  html_document:
+    df_print: paged
 ---
+
+## *R*
+> Use the information in [this dataset](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/HG7NV7) to answer select questions.
 
 #### Import libraries
 ```{r}
@@ -23,6 +28,8 @@ planes <- tbl(conn, "planes")
 carriers <- tbl(conn, "carriers")
 airports <- tbl(conn, "airports")
 ```
+
+#### Answer questions by running queries against the database
 
 ### Which of the following airplanes has the lowest associated average departure delay (excluding Cancelled and Diverted flights)?
 ```{r}
@@ -67,3 +74,4 @@ q4 <- inner_join(flights, carriers, by=c("UniqueCarrier"="Code")) %>%
 #### Close the database connection
 ```{r}
 dbDisconnect(conn)
+```
